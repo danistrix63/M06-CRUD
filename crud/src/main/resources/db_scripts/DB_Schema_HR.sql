@@ -1,15 +1,15 @@
 -- Crear base de datos si no existe
-CREATE DATABASE IF NOT EXISTS empleado;
+CREATE DATABASE IF NOT EXISTS empresa;
 
 -- Usar la base de datos
-USE empleado;
+USE empresa;
 
 -- Crear la tabla 'departamentos'
 CREATE TABLE IF NOT EXISTS departamentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_departamento VARCHAR(100) NOT NULL,
     id_gerente INT,
-    FOREIGN KEY (id_gerente) REFERENCES empleados(id) -- Relación con la tabla empleados para el gerente
+    FOREIGN KEY (id_gerente) REFERENCES empleados(id)
 ) ENGINE=InnoDB;
 
 -- Crear la tabla 'tascas'
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS tascas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion TEXT NOT NULL,
     id_departamento INT,
-    FOREIGN KEY (id_departamento) REFERENCES departamentos(id) -- Relación con la tabla departamentos
+    FOREIGN KEY (id_departamento) REFERENCES departamentos(id)
 ) ENGINE=InnoDB;
 
 -- Crear la tabla 'empleados'
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS empleados (
     email VARCHAR(100) UNIQUE,
     id_departamento INT,
     FOREIGN KEY (id_departamento) REFERENCES departamentos(id),
-    FOREIGN KEY (id_gerente) REFERENCES empleados(id) -- Relación con empleados para los gerentes
+    FOREIGN KEY (id_gerente) REFERENCES empleados(id)
 ) ENGINE=InnoDB;
 
 -- Crear la tabla 'historico' para almacenar registros históricos de tareas

@@ -11,18 +11,27 @@ public class GestioDBHR {
     // Establecer conexión
     public static Connection connect() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            try {
+            try (InputStream inputStream = GestioDBHR.class.getClassLoader().getResourceAsStream("db_scripts/config.properties")) {
+                if (inputStream == null) {
+                    throw new FileNotFoundException("Archivo config.properties no encontrado.");
+                }
+
                 Properties properties = new Properties();
-                InputStream inputStream = GestioDBHR.class.getClassLoader().getResourceAsStream("config.properties");
                 properties.load(inputStream);
 
-                String url = properties.getProperty("db.url");
-                String username = properties.getProperty("db.username");
-                String password = properties.getProperty("db.password");
+                String url = properties.getProperty("db.url", "jdbc:mariadb://localhost:3306/defaultDB");
+                String username = properties.getProperty("db.username", "root");
+                String password = properties.getProperty("db.password", "");
 
                 connection = DriverManager.getConnection(url, username, password);
-            } catch (IOException | SQLException e) {
-                e.printStackTrace();
+                System.out.println("Conexión establecida con éxito.");
+
+            } catch (IOException e) {
+                System.err.println("Error al leer el archivo de configuración: " + e.getMessage());
+                throw new SQLException("No se pudo cargar la configuración de la base de datos.", e);
+            } catch (SQLException e) {
+                System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+                throw e;
             }
         }
         return connection;
@@ -32,6 +41,7 @@ public class GestioDBHR {
     public static void close() throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
+            System.out.println("Conexión cerrada con éxito.");
         }
     }
 }
